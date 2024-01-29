@@ -2,23 +2,60 @@
 
 A Mautic plugin for two-step verification login with Google Authenticator.
 
-## Installation
 
-### Requirements
-- Mautic 3.0+
-- PHP 7.2+
+### Prerequisites
+
+* Mautic 3.0+
+* Project was tested on Mautic 4.4.11
+
+### Installing
+
+Clone repo.
+
+```sh
+$ git clone <repo-url>
+```
+
+For development symlink the plugin, to plugins directory.
+
+```sh
+cd <mautic-root>/plugins
+ln -s <repo-root-folder>HostnetAuthBundle .
+```
+
+Clear the cache & reload
+
+```sh
+cd <mautic-root>
+rm -rf var/cache/dev/* var/cache/prod/*
+php bin/console mautic:plugins:reload --env=dev
+```
+
+### Coding style & Syntax Check
+
+Use Mautic core style fixer/checker (composer fixcs) .
+
+## Deployment
 
 Download this project as a zip file and extract the content from the zip file.
 
 Copy the **HostnetAuthBundle** folder to the **plugins** folder of your Mautic installation.
 
 Clear the cache running this command from the Mautic main folder:
-```sh
-$ php bin/console cache:clear
-```
-Access the plugins page in the Mautic panel and click on **Install/Update Plugins**.
 
-## Activation and Usage
+```sh
+$ rm -rf var/cache/prod/*
+```
+
+Reload the plugins:
+
+```sh
+$ php bi/console mautic:plugins:reload --env=prod
+```
+
+( Alternatively you can access the plugins page in the Mautic panel and click on **Install/Update Plugins**.)
+
+### Activation and Usage
 
 Once the plugin is installed you will need to activate it. Select the Google Authenticator on the plugins page and turn the **Published** option to **Yes**.
 
@@ -28,7 +65,24 @@ Once you've done that, when you log into your Mautic you'll be requested to ente
 
 In the options you can set how many days you wish to not enter the code again when you set a browser as trusted.
 
-## Development
+## Changelog
+
+[todo]
+
+## Built With
+
+* [Mautic](hhttps://github.com/mautic/mautic) - Marketing Automation Tool
+* [Composer](https://getcomposer.org/) - Dependency Management
+
+## Contributing
+
+Any contributions are welcome.
+
+## Versioning
+
+[todo]
+
+## Authors
 
 Este plugin é mantido pela empresa Hostnet Hospedagem de Sites, esperamos que seja útil para você.
 
@@ -47,3 +101,6 @@ Hostnet offers many and more enhanced solutions for using Mautic, both in "do it
 Learn more at:  
 https://www.hostnet.com.br/hospedagem-de-sites/  
 https://www.hostnet.com.br/mautic-automacao-marketing/
+
+
+
