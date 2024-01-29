@@ -3,22 +3,21 @@
 namespace MauticPlugin\HostnetAuthBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Security\Permissions\CorePermissions;
+use Mautic\PluginBundle\Helper\IntegrationHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Mautic\PluginBundle\Helper\IntegrationHelper;
-use Mautic\CoreBundle\Helper\UserHelper;
 
 /**
- * Class UserSubscriber
+ * Class UserSubscriber.
  *
  * @author Henrique Rodrigues <henrique@hostnet.com.br>
  *
- * @link https://www.hostnet.com.br
- *
+ * @see https://www.hostnet.com.br
  */
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -29,8 +28,6 @@ class UserSubscriber implements EventSubscriberInterface
 
     /**
      * UserSubscriber constructor.
-     *
-     * @param RouterInterface  $router
      */
     public function __construct(
         RouterInterface $router,
@@ -39,11 +36,11 @@ class UserSubscriber implements EventSubscriberInterface
         UserHelper $user,
         EntityManager $em
     ) {
-        $this->router = $router;
-        $this->security = $security;
+        $this->router      = $router;
+        $this->security    = $security;
         $this->integration = $integration;
-        $this->user = $user;
-        $this->em = $em;
+        $this->user        = $user;
+        $this->em          = $em;
     }
 
     /**orm
@@ -57,14 +54,12 @@ class UserSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * verifies if the user is authenticated and gives the right response
+     * verifies if the user is authenticated and gives the right response.
      *
-     * @param GetResponseEvent $event
      * @return void
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        
         if (!$event->isMasterRequest()) {
             return false;
         }
@@ -74,18 +69,17 @@ class UserSubscriber implements EventSubscriberInterface
         if (!$myIntegration) {
             return false;
         }
-        
 
         $published = $myIntegration->getIntegrationSettings()->getIsPublished();
 
         if (!$published || !$myIntegration->isConfigured()) {
             return false;
         }
-        
+
         $request    = $event->getRequest();
         $requestUri = $request->getRequestUri();
-        $userId = $this->user->getUser()->getId();
-        
+        $userId     = $this->user->getUser()->getId();
+
         $gauthGranted = $this->isSafeBrowser(
             $request->cookies,
             $userId,
@@ -112,14 +106,14 @@ class UserSubscriber implements EventSubscriberInterface
         if (!$cookies->has('plugin_browser_hash')) {
             return false;
         }
-        
+
         $hash = $cookies->get('plugin_browser_hash');
 
         $browsers = $this->em->getRepository('HostnetAuthBundle:AuthBrowser')->findBy([
             'user_id' => $userId,
-            'hash' => $hash
+            'hash'    => $hash,
         ]);
-        
+
         if (empty($browsers)) {
             return false;
         }

@@ -8,7 +8,7 @@ use Mautic\CoreBundle\Doctrine\Mapping\ClassMetadataBuilder;
 use Mautic\CoreBundle\Entity\CommonEntity;
 
 /**
- * Class World
+ * Class World.
  */
 class AuthBrowser extends CommonEntity
 {
@@ -32,9 +32,6 @@ class AuthBrowser extends CommonEntity
      */
     private $date_added;
 
-    /**
-     * @param ORM\ClassMetadata $metadata
-     */
     public static function loadMetadata(ORM\ClassMetadata $metadata)
     {
         $builder = new ClassMetadataBuilder($metadata);
@@ -170,6 +167,7 @@ class AuthBrowser extends CommonEntity
     public function setDateAdded($date_added)
     {
         $this->date_added = $date_added;
+
         return $this;
     }
 }

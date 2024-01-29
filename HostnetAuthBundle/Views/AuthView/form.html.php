@@ -12,24 +12,24 @@ $view['slots']->set(
         <span class="input-group-addon">
             <i class="fa fa-key"></i>
         </span>
-        <label for="password" class="sr-only"><?=$view['translator']->trans('mautic.plugin.auth.code');?></label>
-        <input type="text" id="password" name="_code" class="form-control input-lg" pattern="[0-9]{6}" required="" placeholder="<?=$view['translator']->trans('mautic.plugin.auth.placeholder');?>">
+        <label for="password" class="sr-only"><?php echo $view['translator']->trans('mautic.plugin.auth.code'); ?></label>
+        <input type="text" id="password" name="_code" class="form-control input-lg" pattern="[0-9]{6}" required="" placeholder="<?php echo $view['translator']->trans('mautic.plugin.auth.placeholder'); ?>">
     </div>
     <div class="input-group mb-md">
         <div class="checkbox-inline custom-primary">
             <label class="mb-0">
                 <input type="checkbox" name="trust_browser" id="browser" value="1" />
                 <span class="mr-0"></span>
-                <?=$view['translator']->trans('mautic.plugin.auth.remember_me');?>
+                <?php echo $view['translator']->trans('mautic.plugin.auth.remember_me'); ?>
             </label>
         </div>
     </div>
-    <input type="hidden" name="_csrf_token" value="<?php echo $view['form']->csrfToken('gauth') ?>" />
+    <input type="hidden" name="_csrf_token" value="<?php echo $view['form']->csrfToken('gauth'); ?>" />
     <input type="hidden" name="hash" id="hash" />
-    <button class="btn btn-lg btn-primary btn-block" type="submit"><?=$view['translator']->trans('mautic.plugin.auth.submit');?></button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo $view['translator']->trans('mautic.plugin.auth.submit'); ?></button>
 </form>
 
-<script src="<?= $view['assets']->getUrl('plugins/HostnetAuthBundle/Assets/js/fingerprint2.min.js'); ?>"></script>
+<script src="<?php echo $view['assets']->getUrl('plugins/HostnetAuthBundle/Assets/js/fingerprint2.min.js'); ?>"></script>
 <script>
     /* global Fingerprint2 */
     document.addEventListener("DOMContentLoaded", function(event) {

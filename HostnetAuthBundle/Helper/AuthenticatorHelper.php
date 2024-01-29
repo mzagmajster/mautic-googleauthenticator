@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the Sonata Project package.
- *
- * (c) Thomas Rabaix <thomas.rabaix@sonata-project.org>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,23 +45,16 @@ final class AuthenticatorHelper
      */
     private $codePeriod = 30;
 
-    /**
-     * @param int                     $passCodeLength
-     * @param int                     $secretLength
-     * @param \DateTimeInterface|null $now
-     */
     public function __construct(int $passCodeLength = 6, int $secretLength = 10, \DateTimeInterface $now = null)
     {
         $this->secretLength = $secretLength;
-        $this->pinModulo = 10 ** $passCodeLength;
-        $this->now = $now ?? new \DateTimeImmutable();
+        $this->pinModulo    = 10 ** $passCodeLength;
+        $this->now          = $now ?? new \DateTimeImmutable();
     }
 
     /**
      * @param string $secret
      * @param string $code
-     *
-     * @return bool
      */
     public function checkCode($secret, $code): bool
     {
@@ -98,9 +82,7 @@ final class AuthenticatorHelper
      * NEXT_MAJOR: add the interface typehint to $time and remove deprecation.
      *
      * @param string                                   $secret
-     * @param float|string|int|null|\DateTimeInterface $time
-     *
-     * @return string
+     * @param float|string|int|\DateTimeInterface|null $time
      */
     public function getCode($secret, /* \DateTimeInterface */ $time = null): string
     {
@@ -124,7 +106,7 @@ final class AuthenticatorHelper
 
         $timeForCode = str_pad(pack('N', $timeForCode), 8, chr(0), STR_PAD_LEFT);
 
-        $hash = hash_hmac('sha1', $timeForCode, $secret, true);
+        $hash   = hash_hmac('sha1', $timeForCode, $secret, true);
         $offset = ord(substr($hash, -1));
         $offset &= 0xF;
 
@@ -140,8 +122,6 @@ final class AuthenticatorHelper
      * @param string $hostname
      * @param string $secret
      *
-     * @return string
-     *
      * @deprecated deprecated as of 2.1 and will be removed in 3.0. Use Sonata\AuthenticatorHelper\GoogleQrUrl::generate() instead.
      */
     public function getUrl($user, $hostname, $secret): string
@@ -152,7 +132,7 @@ final class AuthenticatorHelper
             __METHOD__
         ), E_USER_DEPRECATED);
 
-        $issuer = func_get_args()[3] ?? null;
+        $issuer      = func_get_args()[3] ?? null;
         $accountName = sprintf('%s@%s', $user, $hostname);
 
         // manually concat the issuer to avoid a change in URL
@@ -165,21 +145,12 @@ final class AuthenticatorHelper
         return $url;
     }
 
-    /**
-     * @return string
-     */
     public function generateSecret(): string
     {
         return (new NotationHelper(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', true, true))
             ->encode(random_bytes($this->secretLength));
     }
 
-    /**
-     * @param string $bytes
-     * @param int    $start
-     *
-     * @return int
-     */
     private function hashToInt(string $bytes, int $start): int
     {
         return unpack('N', substr(substr($bytes, $start), 0, 4))[1];

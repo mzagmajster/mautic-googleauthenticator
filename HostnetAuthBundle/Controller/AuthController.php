@@ -1,25 +1,14 @@
 <?php
 
-/*
- * @author      Henrique Rodrigues <henrique@hostnet.com.br>
- *
- * @link        https://www.hostnet.com.br
- *
- */
 
 namespace MauticPlugin\HostnetAuthBundle\Controller;
 
-use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
-use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser;
-
 use Mautic\CoreBundle\Controller\CommonController;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser;
+use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
 use Symfony\Component\HttpFoundation\Cookie;
-
-
-use Mautic\PluginBundle\Helper\IntegrationHelper;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends CommonController
 {
@@ -27,7 +16,7 @@ class AuthController extends CommonController
     {
         if ($this->isCsrfTokenValid('gauth', $request->request->get('_csrf_token'))) {
             $integrationHelper = $this->get('mautic.helper.integration');
-            $myIntegration = $integrationHelper->getIntegrationObject('HostnetAuth');
+            $myIntegration     = $integrationHelper->getIntegrationObject('HostnetAuth');
 
             $secret = $myIntegration->getGauthSecret();
 
@@ -36,7 +25,7 @@ class AuthController extends CommonController
             $ga = new AuthenticatorHelper();
 
             if ($ga->checkCode($secret, $code)) {
-                $trustBrowser = !!$request->request->get('trust_browser');
+                $trustBrowser = (bool) $request->request->get('trust_browser');
 
                 if ($trustBrowser) {
                     $entityManager = $this->getDoctrine()->getManager();
@@ -70,9 +59,8 @@ class AuthController extends CommonController
 
         return $this->delegateView([
             'contentTemplate' => 'HostnetAuthBundle:AuthView:form.html.php',
-            'viewParameters' => [
-
-            ]
+            'viewParameters'  => [
+            ],
         ]);
     }
 }

@@ -5,7 +5,7 @@ namespace MauticPlugin\HostnetAuthBundle\Entity;
 use Mautic\CoreBundle\Entity\CommonRepository;
 
 /**
- * AuthBrowserRepository
+ * AuthBrowserRepository.
  */
 class AuthBrowserRepository extends CommonRepository
 {

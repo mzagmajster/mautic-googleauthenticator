@@ -10,8 +10,8 @@ return [
             'hostnet_google_authenticator' => [
                 'path'       => '/gauth',
                 'controller' => 'HostnetAuthBundle:Auth:auth',
-            ]
-        ]
+            ],
+        ],
     ],
     'services' => [
         'events' => [
@@ -22,9 +22,9 @@ return [
                     'mautic.security',
                     'mautic.helper.integration',
                     'mautic.helper.user',
-                    'doctrine.orm.entity_manager'
-                ]
-            ]
+                    'doctrine.orm.entity_manager',
+                ],
+            ],
         ],
         'integrations' => [
             'mautic.integration.hostnetauth' => [
@@ -48,7 +48,7 @@ return [
                     'mautic.lead.model.dnc',
                     'mautic.helper.user',
                 ],
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];
