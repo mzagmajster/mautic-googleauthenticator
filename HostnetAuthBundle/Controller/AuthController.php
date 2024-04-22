@@ -9,14 +9,58 @@ use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Mautic\PluginBundle\Helper\IntegrationHelper;
+use Doctrine\Persistence\ManagerRegistry;
+use Mautic\CoreBundle\Event\CustomTemplateEvent;
+use Mautic\CoreBundle\Factory\MauticFactory;
+use Mautic\CoreBundle\Factory\ModelFactory;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use Mautic\CoreBundle\Helper\UserHelper;
+use Mautic\CoreBundle\Security\Permissions\CorePermissions;
+use Mautic\CoreBundle\Service\FlashBag;
+use Mautic\CoreBundle\Translation\Translator;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 
 class AuthController extends CommonController
 {
+    protected IntegrationHelper $integrationHelper;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        MauticFactory $factory,
+        ModelFactory $modelFactory,
+        UserHelper $userHelper,
+        CoreParametersHelper $coreParametersHelper,
+        EventDispatcherInterface $dispatcher,
+        Translator $translator,
+        FlashBag $flashBag,
+        ?RequestStack $requestStack,
+        ?CorePermissions $security,
+        IntegrationHelper $integrationHelper
+
+    ) {
+        parent::__construct(
+            $doctrine,
+            $factory,
+            $modelFactory,
+            $userHelper,
+            $coreParametersHelper,
+            $dispatcher,
+            $translator,
+            $flashBag,
+            $requestStack,
+            $security
+        );
+        $this->integrationHelper = $integrationHelper;
+    }
+
     public function authAction(Request $request)
     {
         if ($this->isCsrfTokenValid('gauth', $request->request->get('_csrf_token'))) {
-            $integrationHelper = $this->get('mautic.helper.integration');
-            $myIntegration     = $integrationHelper->getIntegrationObject('HostnetAuth');
+            // $integrationHelper = $this->get('mautic.helper.integration');
+            $myIntegration     = $this->integrationHelper->getIntegrationObject('HostnetAuth');
 
             $secret = $myIntegration->getGauthSecret();
 
@@ -53,12 +97,18 @@ class AuthController extends CommonController
 
                 return $response;
             } else {
-                $this->addFlash($this->translator->trans('mautic.plugin.auth.invalid'), [], 'error', null, false);
+                $this->addFlashMessage(
+                    $this->translator->trans('mautic.plugin.auth.invalid'), 
+                    [],
+                     'error', 
+                     null, 
+                     false
+                 );
             }
         }
 
         return $this->delegateView([
-            'contentTemplate' => 'HostnetAuthBundle:AuthView:form.html.php',
+            'contentTemplate' => '@HostnetAuth/AuthView/form.html.twig',
             'viewParameters'  => [
             ],
         ]);

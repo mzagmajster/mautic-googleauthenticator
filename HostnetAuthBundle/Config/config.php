@@ -9,7 +9,7 @@ return [
         'main' => [
             'hostnet_google_authenticator' => [
                 'path'       => '/gauth',
-                'controller' => 'HostnetAuthBundle:Auth:auth',
+                'controller' => 'MauticPlugin\HostnetAuthBundle\Controller\AuthController::authAction',
             ],
         ],
     ],
@@ -47,6 +47,7 @@ return [
                     'mautic.plugin.model.integration_entity',
                     'mautic.lead.model.dnc',
                     'mautic.helper.user',
+                    'twig',
                 ],
             ],
         ],

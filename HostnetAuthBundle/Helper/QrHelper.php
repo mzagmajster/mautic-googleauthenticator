@@ -72,8 +72,7 @@ final class QrHelper
         $otpauthString = rawurlencode(sprintf($otpauthString, $label, $secret, $issuer));
 
         return sprintf(
-            'https://chart.googleapis.com/chart?chs=%1$dx%1$d&chld=M|0&cht=qr&chl=%2$s',
-            $size,
+            'https://qrcode.tec-it.com/API/QRCode?data=%s',
             $otpauthString
         );
     }

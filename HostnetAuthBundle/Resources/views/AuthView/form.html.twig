@@ -1,0 +1,38 @@
+{# load base template #}
+{% extends '@MauticUser/Security/base.html.twig' %}
+{% block header %}
+    {{ 'mautic.user.auth.header'|trans }}
+{% endblock %}
+
+{% block content %}
+<form class="form-group login-form" name="gauth" id="gauth" role="form" action="" method="post">
+    <div class="input-group mb-md">
+        <span class="input-group-addon">
+            <i class="fa fa-key"></i>
+        </span>
+        <label for="password" class="sr-only">{{ 'mautic.plugin.auth.code'|trans }}</label>
+        <input type="text" id="password" name="_code" class="form-control input-lg" pattern="[0-9]{6}" required="" placeholder="{{ 'mautic.plugin.auth.placeholder'|trans }}">
+    </div>
+    <div class="input-group mb-md">
+        <div class="checkbox-inline custom-primary">
+            <label class="mb-0">
+                <input type="checkbox" name="trust_browser" id="browser" value="1" />
+                <span class="mr-0"></span>
+                {{ 'mautic.plugin.auth.remember_me'|trans }}
+            </label>
+        </div>
+    </div>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('gauth') }}" />
+    <input type="hidden" name="hash" id="hash" />
+    <button class="btn btn-lg btn-primary btn-block" type="submit">{{ 'mautic.plugin.auth.submit'|trans }}</button>
+</form>
+
+<script src="{{ asset('plugins/HostnetAuthBundle/Assets/js/fingerprint2.min.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        new Fingerprint2().get(function (result) {
+            document.querySelector('#hash').value = result
+        })
+    });
+</script>
+{% endblock %}

@@ -8,9 +8,10 @@ use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
+
 
 /**
  * Class UserSubscriber.
@@ -58,7 +59,7 @@ class UserSubscriber implements EventSubscriberInterface
      *
      * @return void
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return false;
@@ -109,7 +110,9 @@ class UserSubscriber implements EventSubscriberInterface
 
         $hash = $cookies->get('plugin_browser_hash');
 
-        $browsers = $this->em->getRepository('HostnetAuthBundle:AuthBrowser')->findBy([
+        $browsers = $this->em->getRepository(
+            \MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser::class
+        )->findBy([
             'user_id' => $userId,
             'hash'    => $hash,
         ]);
