@@ -23,8 +23,4 @@ return function (ContainerConfigurator $configurator) {
     )
         ->exclude('../{'.implode(',', array_merge([], $excludes)).'}');
 
-    /*$services->set('plugin.hostnetauth.repository.authbrowser')
-        ->class(\MauticPlugin\HostnetAuthBundle\Entity\AuthBrowserRepository::class)
-        ->tag('doctrine.repository_service', ['alias' => 'hostnetauth']);*/
-
 };
