@@ -5,8 +5,8 @@ A Mautic plugin for two-step verification login with Google Authenticator.
 
 ### Prerequisites
 
-* Mautic 3.0+
-* Project was tested on Mautic 4.4.11
+* Mautic 5.0+
+* Project was tested on Mautic 5.0.2
 
 ### Installing
 
