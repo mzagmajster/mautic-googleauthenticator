@@ -12,7 +12,6 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
 
-
 /**
  * Class UserSubscriber.
  *
@@ -93,7 +92,7 @@ class UserSubscriber implements EventSubscriberInterface
         $needVerification = (!$this->security->isAnonymous()) // User logged in
             && !preg_match('/gauth|login|HostnetAuth|api/i', $requestUri) // it's not an authentication url
             && !$gauthGranted // user not authenticated
-        ;
+;
 
         if ($needVerification) {
             $request->getSession()->set('gauth_granted', false);

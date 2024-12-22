@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Mautic\CoreBundle\DependencyInjection\MauticCoreExtension;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return function (ContainerConfigurator $configurator) {
@@ -14,7 +13,7 @@ return function (ContainerConfigurator $configurator) {
 
     $excludes = [
         'Helper',
-        'Config'
+        'Config',
     ];
 
     $services->load(
@@ -22,5 +21,4 @@ return function (ContainerConfigurator $configurator) {
         __DIR__.'/../'
     )
         ->exclude('../{'.implode(',', array_merge([], $excludes)).'}');
-
 };

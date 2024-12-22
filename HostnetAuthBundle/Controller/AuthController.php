@@ -1,17 +1,9 @@
 <?php
 
-
 namespace MauticPlugin\HostnetAuthBundle\Controller;
 
-use Mautic\CoreBundle\Controller\CommonController;
-use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser;
-use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Mautic\PluginBundle\Helper\IntegrationHelper;
 use Doctrine\Persistence\ManagerRegistry;
-use Mautic\CoreBundle\Event\CustomTemplateEvent;
+use Mautic\CoreBundle\Controller\CommonController;
 use Mautic\CoreBundle\Factory\MauticFactory;
 use Mautic\CoreBundle\Factory\ModelFactory;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
@@ -19,13 +11,19 @@ use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Mautic\CoreBundle\Service\FlashBag;
 use Mautic\CoreBundle\Translation\Translator;
+use Mautic\PluginBundle\Helper\IntegrationHelper;
+use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser;
+use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 
 class AuthController extends CommonController
 {
     protected IntegrationHelper $integrationHelper;
+    protected UserHelper $userHelper;
 
     public function __construct(
         ManagerRegistry $doctrine,
@@ -39,7 +37,6 @@ class AuthController extends CommonController
         ?RequestStack $requestStack,
         ?CorePermissions $security,
         IntegrationHelper $integrationHelper
-
     ) {
         parent::__construct(
             $doctrine,
@@ -54,6 +51,7 @@ class AuthController extends CommonController
             $security
         );
         $this->integrationHelper = $integrationHelper;
+        $this->userHelper        = $userHelper;
     }
 
     public function authAction(Request $request)
@@ -75,7 +73,7 @@ class AuthController extends CommonController
                     $entityManager = $this->getDoctrine()->getManager();
 
                     $browser = new AuthBrowser();
-                    $browser->setUserId($this->get('mautic.helper.user')->getUser()->getId());
+                    $browser->setUserId($this->userHelper->getUser()->getId());
                     $browser->setHash($request->request->get('hash'));
                     $browser->setDateAdded(date('Y-m-d H:i:s'));
 
@@ -98,12 +96,12 @@ class AuthController extends CommonController
                 return $response;
             } else {
                 $this->addFlashMessage(
-                    $this->translator->trans('mautic.plugin.auth.invalid'), 
+                    $this->translator->trans('mautic.plugin.auth.invalid'),
                     [],
-                     'error', 
-                     null, 
-                     false
-                 );
+                    'error',
+                    null,
+                    false
+                );
             }
         }
 

@@ -249,7 +249,7 @@ final class NotationHelper
                     // Zero or more too many bits to complete a byte;
                     // shift right
                     $newBits     = $charmap[$encodedString[$c]] >> $unusedBitCount;
-                    $bitsWritten = 8; //$bitsWritten += $bitsNeeded;
+                    $bitsWritten = 8; // $bitsWritten += $bitsNeeded;
                 } else {
                     // Final bits don't need to be shifted
                     $newBits     = $charmap[$encodedString[$c]];

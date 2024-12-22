@@ -1,34 +1,33 @@
 <?php
+
 namespace MauticPlugin\HostnetAuthBundle\Integration;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Mautic\CoreBundle\Helper\CacheStorageHelper;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Psr\Log\LoggerInterface;
+use Mautic\CoreBundle\Form\Type\YesNoButtonGroupType;
+use Mautic\CoreBundle\Helper\CacheStorageHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
-use Mautic\LeadBundle\Model\LeadModel;
-use Mautic\LeadBundle\Model\CompanyModel;
 use Mautic\CoreBundle\Helper\PathsHelper;
-use Mautic\CoreBundle\Model\NotificationModel;
-use Mautic\LeadBundle\Model\FieldModel;
-use Mautic\PluginBundle\Model\IntegrationEntityModel;
-use Mautic\LeadBundle\Model\DoNotContact as DoNotContactModel;
 use Mautic\CoreBundle\Helper\UserHelper;
+use Mautic\CoreBundle\Model\NotificationModel;
+use Mautic\LeadBundle\Model\CompanyModel;
+use Mautic\LeadBundle\Model\DoNotContact as DoNotContactModel;
+use Mautic\LeadBundle\Model\FieldModel;
+use Mautic\LeadBundle\Model\LeadModel;
 use Mautic\PluginBundle\Integration\AbstractIntegration;
+use Mautic\PluginBundle\Model\IntegrationEntityModel;
+use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
-use Mautic\CoreBundle\Form\Type\YesNoButtonGroupType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use MauticPlugin\HostnetAuthBundle\Helper\NotationHelper;
-use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
-
 
 class HostnetAuthIntegration extends AbstractIntegration
 {
@@ -37,19 +36,17 @@ class HostnetAuthIntegration extends AbstractIntegration
     protected $user;
 
     protected $status_field;
-    
+
     protected $secret_field;
 
     protected $gauth;
-    
+
     protected $secret;
 
-
-
-
-    public function log_message($message) {
-        $logFile = '/var/www/html/var/logs/my_log.txt';
-        $formattedMessage = date('[Y-m-d H:i:s]') . ' ' . $message . PHP_EOL;
+    public function log_message($message)
+    {
+        $logFile          = '/var/www/html/var/logs/my_log.txt';
+        $formattedMessage = date('[Y-m-d H:i:s]').' '.$message.PHP_EOL;
         file_put_contents($logFile, $formattedMessage, FILE_APPEND);
     }
 
@@ -73,41 +70,38 @@ class HostnetAuthIntegration extends AbstractIntegration
         UserHelper $userHelper,
         Environment $twig
     ) {
-        $this->log_message('__construct');
-        parent::__construct(
-            $eventDispatcher,
-            $cacheStorageHelper,
-            $entityManager,
-            $session,
-            $requestStack,
-            $router,
-            $translator,
-            $logger,
-            $encryptionHelper,
-            $leadModel,
-            $companyModel,
-            $pathsHelper,
-            $notificationModel,
-            $fieldModel,
-            $integrationEntityModel,
-            $doNotContact
-        );
+            $this->log_message('__construct');
+            parent::__construct(
+                $eventDispatcher,
+                $cacheStorageHelper,
+                $entityManager,
+                $session,
+                $requestStack,
+                $router,
+                $translator,
+                $logger,
+                $encryptionHelper,
+                $leadModel,
+                $companyModel,
+                $pathsHelper,
+                $notificationModel,
+                $fieldModel,
+                $integrationEntityModel,
+                $doNotContact
+            );
 
-        $this->userHelper   = $userHelper;
-        $this->twig         = $twig;
+            $this->userHelper   = $userHelper;
+            $this->twig         = $twig;
 
-        $this->user = $this->userHelper->getUser();
+            $this->user = $this->userHelper->getUser();
 
-        $id = $this->user->getId();
-        $this->status_field = "scanned_$id";
-        $this->secret_field = "secret_$id";
-        $this->cookie_field = "cookie_$id";
+            $id                 = $this->user->getId();
+            $this->status_field = "scanned_$id";
+            $this->secret_field = "secret_$id";
+            $this->cookie_field = "cookie_$id";
 
-        $this->gauth = new AuthenticatorHelper();
-    }
-
-
-
+            $this->gauth = new AuthenticatorHelper();
+        }
 
     public function getName(): string
     {
@@ -178,7 +172,7 @@ class HostnetAuthIntegration extends AbstractIntegration
                         'data'  => $this->getCookieDuration(),
                         'attr'  => [
                             'tooltip' => 'You won\'t be prompted for codes in trusted browsers',
-                            'class' => 'form-control'
+                            'class'   => 'form-control',
                         ],
                     ]
                 )
@@ -186,26 +180,22 @@ class HostnetAuthIntegration extends AbstractIntegration
                     $this->secret_field,
                     HiddenType::class,
                     [
-                        'data'  => $this->getGauthSecret()
+                        'data'  => $this->getGauthSecret(),
                     ]
                 );
-       }
+        }
     }
 
-        /**
+    /**
      * {@inheritdoc}
-     *
-     * @param $section
      *
      * @return string|array
      */
     public function getFormNotes($section)
     {
-
-        $this->log_message("getFormNotes " . $section);
+        $this->log_message('getFormNotes '.$section);
 
         if ('custom' === $section) {
-
             $url = $this->router->generate(
                 'mautic_dashboard_index',
                 [],
@@ -220,7 +210,7 @@ class HostnetAuthIntegration extends AbstractIntegration
                     $this->user->getUsername(),
                     $url,
                     $this->secret
-                )
+                ),
             ];
 
             return $this->twig->render(
